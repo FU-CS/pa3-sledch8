@@ -18,6 +18,7 @@ public class BinaryTree {
      * Constructs an empty binary tree.
      */
     public BinaryTree() {
+        this.root = null;
         
     }
 
@@ -34,6 +35,8 @@ public class BinaryTree {
      * @return the level order traversal of the tree.
      */
     public String levelOrderTraversal() {
+        String newstring = levelOrderTraversalHelper(this.root, "");
+        return newstring;
         
     }
 
@@ -41,8 +44,25 @@ public class BinaryTree {
      * Helper method for levelOrderTraversal that takes a node as an argument.
      */
     private String levelOrderTraversalHelper(Node node, String result) {
-        
+        if (node == null){
+            return "";
+        }
+        Queue treequeue = new Queue();
+        treequeue.enqueue(node);
+        while (treequeue.isEmpty() == false){
 
+            Node curr = treequeue.dequeue();
+            result += curr.value + " ";
+
+            if (curr.left != null){
+                treequeue.enqueue(curr.left);
+            }
+
+            if (curr.right != null){
+                treequeue.enqueue(curr.right);
+            }
+        }
+        return result;
     }
 
     /**
@@ -55,8 +75,35 @@ public class BinaryTree {
      * @param value the value to add to the tree.
      */
     public void add(int value) {
+        Queue treequeue = new Queue();
+        Node newnode = new Node(value);
+        if (this.root == null){
+            this.root = newnode;
+            return;
+        }
+        treequeue.enqueue(this.root);
 
 
+        while (treequeue.isEmpty() == false){
+
+            Node curr = treequeue.dequeue();
+
+            if (curr.left == null){
+                curr.left = newnode;
+                return;
+            }
+            else if (curr.left != null){
+                treequeue.enqueue(curr.left);
+            }
+
+            if (curr.right == null){
+                curr.right = newnode;
+                return;
+            }
+            else if (curr.right != null){
+                treequeue.enqueue(curr.right);
+            }
+        }
     }
 
     /** 
@@ -78,21 +125,56 @@ public class BinaryTree {
      * 
      */
     public void invert() {
+        Queue treequeue = new Queue();
+        Node curr = null;
+        Node tmp = null;
+        treequeue.enqueue(this.root);
+        if (this.root == null){
+            return;
+        }
+
+        while (treequeue.isEmpty() == false){
+            curr = treequeue.dequeue();
+            tmp = curr.left;
+            curr.left = curr.right;
+            curr.right = tmp;
+
+            if (curr.left != null){
+                treequeue.enqueue(curr.left);
+            }
+
+            if (curr.right != null){
+                treequeue.enqueue(curr.right);
+            }
+        }
 
        
     }
 
-    public int getHeight() {
+     public int getHeight() {
+        return this.getHeightHelper(this.root, 0);
         
-    }
+     }
 
     /** Counts the height of the tree 
      *  Height is defined as the number of edges in the longest path from the root to a leaf node. 
-     */
-    private int getHeightHelper(Node node) {
-
+    //  */
+     private int getHeightHelper(Node node, int count) {
+        if (node == null){
+            return count-1;
+        }
         
-    }
+        int left = this.getHeightHelper(node.left, count + 1);
+        
+        int right = this.getHeightHelper(node.right, count + 1); 
+
+        if (left > right){
+            return left;
+        }
+        else{
+            return right;
+        }        
+     }
 
     public static void main(String[] args) {
         BinaryTree tree = new BinaryTree();
@@ -103,12 +185,23 @@ public class BinaryTree {
         tree.add(5);
         tree.add(6);
         tree.add(7);
+        tree.add(8);
+        tree.add(9);
+        tree.add(10);
+        tree.add(11);
+        tree.add(12);
+        tree.add(13);
+        tree.add(14);
         System.out.println(tree.levelOrderTraversal()); // Should print 1 2 3 4 5 6 7
-
+        System.out.println(tree.getHeight());
         tree.invert();
+        System.out.println(tree.levelOrderTraversal());
 
-        System.out.println(tree.levelOrderTraversal()); // Should print 1 3 2 7 6 5 4
 
-        System.out.println(tree.getHeight()); // Should print 2
+        // tree.invert();
+
+        // System.out.println(tree.levelOrderTraversal()); // Should print 1 3 2 7 6 5 4
+
+        // System.out.println(tree.getHeight()); // Should print 2
     }
 }
